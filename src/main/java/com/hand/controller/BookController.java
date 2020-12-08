@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,5 +64,26 @@ public class BookController {
             System.out.println("修改成功"+books);
         }
         return "redirect:/book/allBook";
+    }
+
+    //删除书籍
+    @RequestMapping("/deleteBook/{bookId}")
+    public String deleteBook(@PathVariable("bookId") int id){
+        bookService.deleteBook(id);
+        return "redirect:/book/allBook";
+    }
+
+    //查询书籍
+    @RequestMapping("/queryBook")
+    public String queryBook(String queryBook,Model model){
+        Books books = bookService.queryBookByName(queryBook);
+        List<Books> list = new ArrayList<Books>();
+        list.add(books);
+        if (books == null) {
+            list = bookService.queryAllBook();
+            model.addAttribute("msg", "未查到");
+        }
+        model.addAttribute("list", list);
+        return "allBook";
     }
 }
